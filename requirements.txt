@@ -1,0 +1,15 @@
+Flask
+Flask-SQLAlchemy
+Flask-Login
+Werkzeug
+Pillow
+python-docx
+python-pptx
+img2pdf
+pdf2docx
+reportlab
+pandas
+openpyxl
+pdfplumber
+pypdf
+pymupdf

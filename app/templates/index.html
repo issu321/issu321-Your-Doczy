@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-content">
+        <div class="hero-badge">
+            <span class="badge-dot"></span>
+            <span>Universal Document Converter</span>
+        </div>
+        <h1 class="hero-title">
+            <span class="gradient-text">Transform</span> Your Documents<br>
+            With <span class="gradient-text">Butter-Smooth</span> Precision
+        </h1>
+        <p class="hero-subtitle">
+            The most elegant document conversion tool ever built. Convert between PDF, Word, 
+            PowerPoint, Excel, CSV, and Images with stunning quality and absolute simplicity.
+        </p>
+        <div class="hero-cta">
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('main.dashboard') }}" class="btn btn-primary btn-glow">
+                    <span>Go to Dashboard</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
+            {% else %}
+                <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-glow">
+                    <span>Start Converting Free</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
+                <a href="{{ url_for('auth.login') }}" class="btn btn-secondary">
+                    <span>Already have an account?</span>
+                </a>
+            {% endif %}
+        </div>
+
+        <div class="hero-stats">
+            <div class="stat-item">
+                <span class="stat-number">9</span>
+                <span class="stat-label">Converter Types</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-number">50MB</span>
+                <span class="stat-label">Max File Size</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-number">100%</span>
+                <span class="stat-label">Free & Secure</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="hero-visual">
+        <div class="glass-card hero-card">
+            <div class="card-header">
+                <div class="card-dots">
+                    <span></span><span></span><span></span>
+                </div>
+                <span class="card-title">PDF → Word</span>
+            </div>
+            <div class="card-body">
+                <div class="doc-preview">
+                    <div class="doc-page"></div>
+                    <div class="doc-page"></div>
+                    <div class="doc-page"></div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+                <div class="card-status">
+                    <span class="status-icon">✓</span>
+                    <span>Conversion Complete</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-card hero-card hero-card-2">
+            <div class="floating-icon">🖼️</div>
+            <div class="card-text">Images → PDF</div>
+            <div class="mini-progress">
+                <div class="mini-fill"></div>
+            </div>
+        </div>
+
+        <div class="glass-card hero-card hero-card-3">
+            <div class="floating-icon">📊</div>
+            <div class="card-text">Excel → PDF</div>
+            <div class="check-ring"></div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features" id="features">
+    <div class="section-header">
+        <span class="section-tag">Features</span>
+        <h2 class="section-title">Everything You Need to <span class="gradient-text">Convert</span></h2>
+        <p class="section-subtitle">Ten powerful converters in one beautiful dashboard. No compromises on quality.</p>
+    </div>
+
+    <div class="features-grid">
+        <div class="feature-card glass-card">
+            <div class="feature-icon icon-cyan">🖼️</div>
+            <h3>Images to PDF</h3>
+            <p>Merge multiple images into a single polished PDF document. Supports JPG, PNG, GIF, BMP, and more.</p>
+            <div class="feature-hover"></div>
+        </div>
+
+<div class="feature-card glass-card">
+            <div class="feature-icon icon-pink">📝</div>
+            <h3>PDF to Word</h3>
+            <p>Convert PDF documents to editable Word files with preserved formatting, fonts, and layout structure.</p>
+            <div class="feature-hover"></div>
+        </div>
+
+        <div class="feature-card glass-card">
+            <div class="feature-icon icon-blue">📘</div>
+            <h3>Word to PDF</h3>
+            <p>Transform Word documents into universally compatible PDFs with perfect typography and embedded images.</p>
+            <div class="feature-hover"></div>
+        </div>
+
+        <div class="feature-card glass-card">
+            <div class="feature-icon icon-orange">📊</div>
+            <h3>PPT to PDF</h3>
+            <p>Convert PowerPoint presentations to PDF while maintaining slide layouts, graphics, and visual fidelity.</p>
+            <div class="feature-hover"></div>
+        </div>
+
+        <div class="feature-card glass-card">
+            <div class="feature-icon icon-green">🎯</div>
+            <h3>PDF to PPT</h3>
+            <p>Turn PDF pages into editable PowerPoint slides. Perfect for repurposing reports into presentations.</p>
+            <div class="feature-hover"></div>
+        </div>
+
+        <div class="feature-card glass-card">
+            <div class="feature-icon icon-lime">📗</div>
+            <h3>Excel to CSV</h3>
+            <p>Convert Excel spreadsheets to clean CSV format for data processing and database imports.</p>
+            <div class="feature-hover"></div>
+        </div>
+
+        <div class="feature-card glass-card">
+            <div class="feature-icon icon-yellow">📒</div>
+            <h3>CSV to Excel</h3>
+            <p>Transform raw CSV data into beautifully formatted Excel workbooks with styling and structure.</p>
+            <div class="feature-hover"></div>
+        </div>
+
+        <div class="feature-card glass-card">
+            <div class="feature-icon icon-red">📕</div>
+            <h3>Excel to PDF</h3>
+            <p>Export your spreadsheets as professional PDF reports with formatted tables and clean layout.</p>
+            <div class="feature-hover"></div>
+        </div>
+
+        <div class="feature-card glass-card">
+            <div class="feature-icon icon-teal">📑</div>
+            <h3>PDF to Excel</h3>
+            <p>Extract tables and data from PDFs directly into editable Excel files with multiple sheets.</p>
+            <div class="feature-hover"></div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="glass-panel cta-panel">
+        <div class="cta-content">
+            <h2>Ready to Convert?</h2>
+            <p>Join thousands of users who trust Your-Doczy for their document conversion needs.</p>
+            <div class="cta-buttons">
+                {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('main.dashboard') }}" class="btn btn-primary btn-glow">
+                        <span>Open Dashboard</span>
+                    </a>
+                {% else %}
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-glow">
+                        <span>Create Free Account</span>
+                    </a>
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-ghost">
+                        <span>Sign In</span>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="cta-glow"></div>
+    </div>
+</section>
+{% endblock %}

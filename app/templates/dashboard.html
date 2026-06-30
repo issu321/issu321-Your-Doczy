@@ -1,0 +1,435 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<section class="dashboard">
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+        <div class="welcome-text">
+            <h1>Welcome back, <span class="gradient-text">{{ current_user.username }}</span> 👋</h1>
+            <p>Choose a converter tool below and start transforming your documents</p>
+        </div>
+        <div class="user-badge glass-badge">
+            <span class="user-avatar">{{ current_user.username[0].upper() }}</span>
+            <div class="user-info">
+                <span class="user-name">{{ current_user.username }}</span>
+                <span class="user-role">Free Plan</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Converter Grid -->
+    <div class="converter-grid">
+        <div class="converter-card glass-card" data-converter="images-to-pdf">
+            <div class="converter-icon icon-cyan">🖼️</div>
+            <h3>Images to PDF</h3>
+            <p>Merge multiple images into one PDF</p>
+            <button class="btn btn-convert" onclick="openConverter('images-to-pdf')">Convert Now</button>
+        </div>
+
+<div class="converter-card glass-card" data-converter="pdf-to-word">
+            <div class="converter-icon icon-pink">📝</div>
+            <h3>PDF to Word</h3>
+            <p>Convert PDF to editable DOCX</p>
+            <button class="btn btn-convert" onclick="openConverter('pdf-to-word')">Convert Now</button>
+        </div>
+
+        <div class="converter-card glass-card" data-converter="word-to-pdf">
+            <div class="converter-icon icon-blue">📘</div>
+            <h3>Word to PDF</h3>
+            <p>Transform DOCX to PDF</p>
+            <button class="btn btn-convert" onclick="openConverter('word-to-pdf')">Convert Now</button>
+        </div>
+
+        <div class="converter-card glass-card" data-converter="ppt-to-pdf">
+            <div class="converter-icon icon-orange">📊</div>
+            <h3>PPT to PDF</h3>
+            <p>Convert presentations to PDF</p>
+            <button class="btn btn-convert" onclick="openConverter('ppt-to-pdf')">Convert Now</button>
+        </div>
+
+        <div class="converter-card glass-card" data-converter="pdf-to-ppt">
+            <div class="converter-icon icon-green">🎯</div>
+            <h3>PDF to PPT</h3>
+            <p>Turn PDF pages into slides</p>
+            <button class="btn btn-convert" onclick="openConverter('pdf-to-ppt')">Convert Now</button>
+        </div>
+
+        <div class="converter-card glass-card" data-converter="excel-to-csv">
+            <div class="converter-icon icon-lime">📗</div>
+            <h3>Excel to CSV</h3>
+            <p>Convert spreadsheets to CSV</p>
+            <button class="btn btn-convert" onclick="openConverter('excel-to-csv')">Convert Now</button>
+        </div>
+
+        <div class="converter-card glass-card" data-converter="csv-to-excel">
+            <div class="converter-icon icon-yellow">📒</div>
+            <h3>CSV to Excel</h3>
+            <p>Transform CSV to XLSX</p>
+            <button class="btn btn-convert" onclick="openConverter('csv-to-excel')">Convert Now</button>
+        </div>
+
+        <div class="converter-card glass-card" data-converter="excel-to-pdf">
+            <div class="converter-icon icon-red">📕</div>
+            <h3>Excel to PDF</h3>
+            <p>Export spreadsheets as PDF</p>
+            <button class="btn btn-convert" onclick="openConverter('excel-to-pdf')">Convert Now</button>
+        </div>
+
+        <div class="converter-card glass-card" data-converter="pdf-to-excel">
+            <div class="converter-icon icon-teal">📑</div>
+            <h3>PDF to Excel</h3>
+            <p>Extract tables from PDF</p>
+            <button class="btn btn-convert" onclick="openConverter('pdf-to-excel')">Convert Now</button>
+        </div>
+    </div>
+
+    <!-- Recent Conversions -->
+    <div class="recent-section">
+        <div class="section-header-row">
+            <h2>Recent Conversions</h2>
+            <button class="btn btn-refresh" onclick="loadHistory()" title="Refresh">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            </button>
+        </div>
+        <div class="glass-panel">
+            <div class="table-container">
+                <table class="data-table" id="historyTable">
+                    <thead>
+                        <tr>
+                            <th>Original File</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for conv in conversions %}
+                        <tr>
+                            <td>
+                                <div class="file-cell">
+                                    <span class="file-icon">{% if 'pdf' in conv.conversion_type %}📄{% elif 'excel' in conv.conversion_type or 'csv' in conv.conversion_type %}📊{% else %}📝{% endif %}</span>
+                                    <span class="file-name" title="{{ conv.original_filename }}">{{ conv.original_filename[:30] }}{% if conv.original_filename|length > 30 %}...{% endif %}</span>
+                                </div>
+                            </td>
+                            <td><span class="badge badge-type">{{ conv.conversion_type.replace('_', ' ').title() }}</span></td>
+                            <td><span class="badge badge-{{ conv.status }}">{{ conv.status.title() }}</span></td>
+                            <td>{{ conv.created_at.strftime('%b %d, %Y %H:%M') }}</td>
+                            <td>
+                                {% if conv.status == 'completed' %}
+                                <button class="btn btn-download" onclick="downloadFile('{{ conv.converted_filename }}')">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                    Download
+                                </button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr class="empty-row">
+                            <td colspan="5">
+                                <div class="empty-state">
+                                    <span class="empty-icon">📭</span>
+                                    <p>No conversions yet. Start converting above!</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Converter Modal -->
+<div class="modal-overlay" id="converterModal">
+    <div class="modal glass-card">
+        <div class="modal-header">
+            <h3 id="modalTitle">Converter</h3>
+            <button class="modal-close" onclick="closeModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="upload-zone" id="uploadZone">
+                <div class="upload-content">
+                    <div class="upload-icon">📂</div>
+                    <p class="upload-text">Drag & drop files here</p>
+                    <p class="upload-subtext">or click to browse</p>
+                    <input type="file" id="fileInput" class="file-input" multiple>
+                </div>
+                <div class="upload-active" id="uploadActive">
+                    <div class="file-list" id="fileList"></div>
+                </div>
+            </div>
+
+            <div class="progress-area" id="progressArea" style="display: none;">
+                <div class="progress-ring">
+                    <svg viewBox="0 0 100 100">
+                        <defs>
+                            <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#00f0ff;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#4facfe;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <circle class="progress-track" cx="50" cy="50" r="40"/>
+                        <circle class="progress-fill" id="progressCircle" cx="50" cy="50" r="40"/>
+                    </svg>
+                    <div class="progress-text" id="progressText">0%</div>
+                </div>
+                <p class="progress-label">Converting your document...</p>
+            </div>
+
+            <div class="result-area" id="resultArea" style="display: none;">
+                <div class="success-icon">✨</div>
+                <h4>Conversion Complete!</h4>
+                <p>Your file is ready for download</p>
+                <button class="btn btn-primary btn-glow" id="downloadBtn" onclick="triggerDownload()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Download File
+                </button>
+            </div>
+        </div>
+        <div class="modal-footer" id="modalFooter">
+            <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+            <button class="btn btn-primary btn-glow" id="convertBtn" onclick="startConversion()">
+                <span>Start Conversion</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const converterConfig = {
+    'images-to-pdf': { title: 'Images to PDF', endpoint: '/convert/images-to-pdf', multiple: true, accept: 'image/*' },
+'pdf-to-word': { title: 'PDF to Word', endpoint: '/convert/pdf-to-word', multiple: false, accept: '.pdf' },
+    'word-to-pdf': { title: 'Word to PDF', endpoint: '/convert/word-to-pdf', multiple: false, accept: '.doc,.docx' },
+    'ppt-to-pdf': { title: 'PPT to PDF', endpoint: '/convert/ppt-to-pdf', multiple: false, accept: '.ppt,.pptx' },
+    'pdf-to-ppt': { title: 'PDF to PPT', endpoint: '/convert/pdf-to-ppt', multiple: false, accept: '.pdf' },
+    'excel-to-csv': { title: 'Excel to CSV', endpoint: '/convert/excel-to-csv', multiple: false, accept: '.xls,.xlsx' },
+    'csv-to-excel': { title: 'CSV to Excel', endpoint: '/convert/csv-to-excel', multiple: false, accept: '.csv' },
+    'excel-to-pdf': { title: 'Excel to PDF', endpoint: '/convert/excel-to-pdf', multiple: false, accept: '.xls,.xlsx' },
+    'pdf-to-excel': { title: 'PDF to Excel', endpoint: '/convert/pdf-to-excel', multiple: false, accept: '.pdf' }
+};
+
+let currentConverter = null;
+let selectedFiles = [];
+let currentDownloadUrl = null;
+
+function openConverter(type) {
+    currentConverter = converterConfig[type];
+    document.getElementById('modalTitle').textContent = currentConverter.title;
+    document.getElementById('fileInput').multiple = currentConverter.multiple;
+    document.getElementById('fileInput').accept = currentConverter.accept;
+
+    selectedFiles = [];
+    currentDownloadUrl = null;
+    document.getElementById('fileList').innerHTML = '';
+    document.getElementById('uploadZone').classList.remove('has-files');
+    document.getElementById('progressArea').style.display = 'none';
+    document.getElementById('resultArea').style.display = 'none';
+    document.getElementById('modalFooter').style.display = 'flex';
+    document.getElementById('uploadZone').style.display = 'block';
+
+    document.getElementById('converterModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+    document.getElementById('converterModal').classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+// Drag and drop
+const uploadZone = document.getElementById('uploadZone');
+const fileInput = document.getElementById('fileInput');
+
+uploadZone.addEventListener('click', () => fileInput.click());
+
+uploadZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    uploadZone.classList.add('dragover');
+});
+
+uploadZone.addEventListener('dragleave', () => {
+    uploadZone.classList.remove('dragover');
+});
+
+uploadZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    uploadZone.classList.remove('dragover');
+    handleFiles(e.dataTransfer.files);
+});
+
+fileInput.addEventListener('change', (e) => {
+    handleFiles(e.target.files);
+});
+
+function handleFiles(files) {
+    selectedFiles = Array.from(files);
+    if (selectedFiles.length > 0) {
+        uploadZone.classList.add('has-files');
+        renderFileList();
+    }
+}
+
+function renderFileList() {
+    const list = document.getElementById('fileList');
+    list.innerHTML = selectedFiles.map((file, i) => `
+        <div class="file-item">
+            <span class="file-item-icon">📄</span>
+            <span class="file-item-name">${file.name}</span>
+            <span class="file-item-size">${formatSize(file.size)}</span>
+            <button class="file-item-remove" onclick="removeFile(${i})">×</button>
+        </div>
+    `).join('');
+}
+
+function removeFile(index) {
+    selectedFiles.splice(index, 1);
+    if (selectedFiles.length === 0) {
+        document.getElementById('uploadZone').classList.remove('has-files');
+    }
+    renderFileList();
+}
+
+function formatSize(bytes) {
+    if (bytes === 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+}
+
+function startConversion() {
+    if (selectedFiles.length === 0) {
+        showToast('Please select files first', 'error');
+        return;
+    }
+
+    const formData = new FormData();
+    selectedFiles.forEach(file => formData.append('files', file));
+    if (selectedFiles.length === 1) {
+        formData.append('file', selectedFiles[0]);
+    }
+
+    document.getElementById('uploadZone').style.display = 'none';
+    document.getElementById('modalFooter').style.display = 'none';
+    document.getElementById('progressArea').style.display = 'block';
+
+    let progress = 0;
+    const interval = setInterval(() => {
+        progress += Math.random() * 15;
+        if (progress > 90) progress = 90;
+        updateProgress(progress);
+    }, 300);
+
+    fetch(currentConverter.endpoint, {
+        method: 'POST',
+        body: formData,
+        credentials: 'same-origin'
+    })
+    .then(async res => {
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+            throw new Error(data.error || 'Conversion failed with status ' + res.status);
+        }
+        return data;
+    })
+    .then(data => {
+        clearInterval(interval);
+        updateProgress(100);
+        setTimeout(() => {
+            document.getElementById('progressArea').style.display = 'none';
+            document.getElementById('resultArea').style.display = 'block';
+            currentDownloadUrl = data.download_url;
+            showToast('Conversion successful!', 'success');
+            loadHistory();
+        }, 500);
+    })
+    .catch(err => {
+        clearInterval(interval);
+        document.getElementById('progressArea').style.display = 'none';
+        document.getElementById('uploadZone').style.display = 'block';
+        document.getElementById('modalFooter').style.display = 'flex';
+        showToast(err.message, 'error');
+    });
+}
+
+function triggerDownload() {
+    if (!currentDownloadUrl) {
+        showToast('Download URL not available', 'error');
+        return;
+    }
+    // Use window.location for guaranteed download
+    window.location.href = currentDownloadUrl;
+}
+
+function downloadFile(filename) {
+    // Direct navigation — browser handles it as download
+    window.location.href = '/convert/download/' + encodeURIComponent(filename);
+}
+
+function updateProgress(percent) {
+    const circle = document.getElementById('progressCircle');
+    const text = document.getElementById('progressText');
+    const circumference = 2 * Math.PI * 40;
+    const offset = circumference - (percent / 100) * circumference;
+    circle.style.strokeDashoffset = offset;
+    text.textContent = Math.round(percent) + '%';
+}
+
+function loadHistory() {
+    fetch('/convert/history', { credentials: 'same-origin' })
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.querySelector('#historyTable tbody');
+            if (data.length === 0) {
+                tbody.innerHTML = `<tr class="empty-row"><td colspan="5"><div class="empty-state"><span class="empty-icon">📭</span><p>No conversions yet. Start converting above!</p></div></td></tr>`;
+                return;
+            }
+            tbody.innerHTML = data.map(c => {
+                const icon = c.type.includes('pdf') ? '📄' : (c.type.includes('excel') || c.type.includes('csv')) ? '📊' : '📝';
+                return `<tr>
+                    <td><div class="file-cell"><span class="file-icon">${icon}</span><span class="file-name" title="${c.original}">${c.original.length > 30 ? c.original.substring(0,30)+'...' : c.original}</span></div></td>
+                    <td><span class="badge badge-type">${c.type.replace(/_/g,' ').replace(/\b\w/g,l=>l.toUpperCase())}</span></td>
+                    <td><span class="badge badge-${c.status}">${c.status.charAt(0).toUpperCase()+c.status.slice(1)}</span></td>
+                    <td>${c.date}</td>
+                    <td>${c.status === 'completed' ? `<button class="btn btn-download" onclick="downloadFile('${c.converted}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download</button>` : '-'}</td>
+                </tr>`;
+            }).join('');
+        })
+        .catch(err => {
+            showToast('Failed to load history: ' + err.message, 'error');
+        });
+}
+
+function showToast(message, type = 'info') {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.innerHTML = `
+        <div class="toast-content">
+            <span class="toast-icon">${type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ'}</span>
+            <span class="toast-message">${message}</span>
+        </div>
+        <button class="toast-close" onclick="this.parentElement.remove()">×</button>
+    `;
+    container.appendChild(toast);
+    setTimeout(() => toast.remove(), 4000);
+}
+
+// Close modal on overlay click
+document.getElementById('converterModal').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('converterModal')) closeModal();
+});
+
+// Escape key to close
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeModal();
+});
+</script>
+{% endblock %}
